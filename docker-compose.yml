@@ -1,0 +1,107 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: cinepass-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: movieapp
+      MYSQL_PASSWORD: MovieApp@123
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./database/setup.sql:/docker-entrypoint-initdb.d/01-setup.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+
+  eureka-server:
+    build:
+      context: .
+      dockerfile: eureka-server/Dockerfile
+    ports:
+      - "8761:8761"
+
+  user-service:
+    build:
+      context: .
+      dockerfile: user-service/Dockerfile
+    environment:
+      DB_URL: "jdbc:mysql://mysql:3306/movie_user_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      DB_USERNAME: movieapp
+      DB_PASSWORD: MovieApp@123
+      EUREKA_URL: "http://eureka-server:8761/eureka/"
+      JWT_SECRET: "${JWT_SECRET:-ChangeThisDevelopmentSecretToAUnique32ByteMinimumValue!}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+
+  movie-service:
+    build:
+      context: .
+      dockerfile: movie-service/Dockerfile
+    environment:
+      DB_URL: "jdbc:mysql://mysql:3306/movie_movie_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      DB_USERNAME: movieapp
+      DB_PASSWORD: MovieApp@123
+      EUREKA_URL: "http://eureka-server:8761/eureka/"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+
+  show-service:
+    build:
+      context: .
+      dockerfile: show-service/Dockerfile
+    environment:
+      DB_URL: "jdbc:mysql://mysql:3306/movie_show_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      DB_USERNAME: movieapp
+      DB_PASSWORD: MovieApp@123
+      EUREKA_URL: "http://eureka-server:8761/eureka/"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+
+  booking-service:
+    build:
+      context: .
+      dockerfile: booking-service/Dockerfile
+    environment:
+      DB_URL: "jdbc:mysql://mysql:3306/movie_booking_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      DB_USERNAME: movieapp
+      DB_PASSWORD: MovieApp@123
+      EUREKA_URL: "http://eureka-server:8761/eureka/"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+      show-service:
+        condition: service_started
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    environment:
+      EUREKA_URL: "http://eureka-server:8761/eureka/"
+      JWT_SECRET: "${JWT_SECRET:-ChangeThisDevelopmentSecretToAUnique32ByteMinimumValue!}"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka-server
+      - user-service
+      - movie-service
+      - show-service
+      - booking-service
+
+volumes:
+  mysql-data:

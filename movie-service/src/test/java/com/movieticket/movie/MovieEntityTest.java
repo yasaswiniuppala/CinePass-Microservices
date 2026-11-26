@@ -1,0 +1,1 @@
+package com.movieticket.movie; import org.junit.jupiter.api.Test; import static org.junit.jupiter.api.Assertions.*; class MovieEntityTest {@Test void movieFieldsCanBeSet(){Movie m=new Movie();m.setTitle("Arrival");m.setGenre("Sci-Fi");m.setDurationMinutes(116);m.setLanguage("English");assertEquals("Arrival",m.getTitle());assertEquals(116,m.getDurationMinutes());}}

@@ -1,0 +1,1 @@
+package com.movieticket.show; import org.junit.jupiter.api.Test; import static org.junit.jupiter.api.Assertions.*; class SeatTest {@Test void seatStartsAvailableAndCanBeReserved(){Seat s=new Seat(1L,"S01");assertFalse(s.isReserved());s.setReserved(true);assertTrue(s.isReserved());}}

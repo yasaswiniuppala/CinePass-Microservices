@@ -1,0 +1,3 @@
+package com.movieticket.show;
+import org.junit.jupiter.api.Test;import org.springframework.beans.factory.annotation.Autowired;import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;import org.springframework.transaction.annotation.Transactional;import static org.assertj.core.api.Assertions.assertThat;
+@DataJpaTest class SeatRepositoryIntegrationTest {@Autowired SeatRepository seats; @Test @Transactional void seatCanBeLockedAndReserved(){Seat seat=seats.saveAndFlush(new Seat(10L,"S01"));Seat locked=seats.lockSeat(10L,"S01").orElseThrow();assertThat(locked.getId()).isEqualTo(seat.getId());locked.setReserved(true);seats.saveAndFlush(locked);assertThat(seats.lockSeat(10L,"S01").orElseThrow().isReserved()).isTrue();}}

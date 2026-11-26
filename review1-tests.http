@@ -1,0 +1,279 @@
+@base = http://localhost:8080
+@token = {{signin.response.body.accessToken}}
+
+### 1. Register user (use a unique email on each fresh DB)
+# @name signup
+POST {{base}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "email": "student@example.com",
+  "password": "Passw0rd"
+}
+
+### 2. Login
+# @name signin
+POST {{base}}/api/auth/signin
+Content-Type: application/json
+
+{"email":"student@example.com","password":"Passw0rd!"}
+
+### 3. Create movie
+# @name createMovie
+POST {{base}}/api/movies
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"title":"Interstellar","genre":"Sci-Fi","durationMinutes":169,"language":"English","description":"Space exploration"}
+
+### 4. List movies
+GET {{base}}/api/movies
+Authorization: Bearer {{token}}
+
+### 5. Update movie (replace id)
+PUT {{base}}/api/movies/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+{
+  "title": "Interstellar - Updated",
+  "genre": "Sci-Fi",
+  "durationMinutes": 169,
+  "language": "English",
+  "description": "Updated space exploration movie"
+}
+
+{"title":"Interstellar - Updated","genre":"Sci-Fi","durationMinutes":169,"language":"English","description":"Updated description"}
+
+### 6. Create show (future date; replace movieId if needed)
+# @name createShow
+POST {{base}}/api/shows
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"movieId":1,"theatre":"CinePass Central","screenName":"Screen 1","startTime":"2030-12-01T18:30:00","seatCapacity":50}
+
+### 7. List shows
+GET {{base}}/api/shows
+Authorization: Bearer {{token}}
+
+### 8. View seats
+GET {{base}}/api/shows/1/seats
+Authorization: Bearer {{token}}
+
+### 9. Book a seat (email is taken from JWT, not request body)
+# @name bookSeat
+POST {{base}}/api/bookings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"showId":1,"seatNumber":"S03"}
+
+### 10. Duplicate booking must return 409
+POST {{base}}/api/bookings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"showId":1,"seatNumber":"S01"}
+
+### 11. My bookings
+GET {{base}}/api/bookings
+Authorization: Bearer {{token}}
+
+### 12. Cancel booking (replace id)
+DELETE {{base}}/api/bookings/1
+Authorization: Bearer {{token}}
+
+### 13. Delete movie (only after related shows are removed)
+DELETE {{base}}/api/movies/1
+Authorization: Bearer {{token}}
+### Get all movies
+GET {{base}}/api/movies
+Authorization: Bearer {{token}}
+### Create movie again
+POST {{base}}/api/movies
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Interstellar",
+  "genre": "Sci-Fi",
+  "durationMinutes": 169,
+  "language": "English",
+  "description": "A team travels through a wormhole in space to save humanity."
+}
+### Get all shows
+GET {{base}}/api/shows
+Authorization: Bearer {{token}}
+### Delete duplicate movie 3
+DELETE {{base}}/api/movies/3
+Authorization: Bearer {{token}}
+### Delete duplicate movie 2
+DELETE {{base}}/api/movies/2
+Authorization: Bearer {{token}}
+### Get all movies
+GET {{base}}/api/movies
+Authorization: Bearer {{token}}
+### Create movie
+POST {{base}}/api/movies
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Inception",
+  "genre": "Sci-Fi",
+  "durationMinutes": 148,
+  "language": "English",
+  "description": "A thief enters people's dreams."
+}
+### Update movie
+PUT {{base}}/api/movies/4
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Inception Updated",
+  "genre": "Science Fiction",
+  "durationMinutes": 150,
+  "language": "English",
+  "description": "An updated description for testing movie updates."
+}
+### Get movie by ID
+GET {{base}}/api/movies/4
+Authorization: Bearer {{token}}
+### Create show
+POST {{base}}/api/shows
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "movieId": 4,
+  "theatre": "CinePass Central",
+  "screenName": "Screen 2",
+  "startTime": "2030-12-02T18:30:00",
+  "seatCapacity": 50
+}
+### Get show by ID
+GET {{base}}/api/shows/3
+Authorization: Bearer {{token}}
+### Update show
+PUT {{base}}/api/shows/3
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "movieId": 4,
+  "theatre": "CinePass Grand Theatre",
+  "screenName": "Screen 3",
+  "startTime": "2030-12-02T19:30:00",
+  "seatCapacity": 50
+}
+### Delete show
+DELETE {{base}}/api/shows/3
+Authorization: Bearer {{token}}
+### Verify show deletion
+GET {{base}}/api/shows/3
+Authorization: Bearer {{token}}
+### Get all shows
+GET {{base}}/api/shows
+Authorization: Bearer {{token}}
+### Create movie for booking test
+POST {{base}}/api/movies
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Avatar",
+  "genre": "Sci-Fi",
+  "durationMinutes": 162,
+  "language": "English",
+  "description": "An epic science fiction adventure."
+}
+### Create show for Avatar
+POST {{base}}/api/shows
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "movieId": 5,
+  "theatre": "CinePass Central",
+  "screenName": "Screen 4",
+  "startTime": "2030-12-03T18:30:00",
+  "seatCapacity": 50
+}
+### Get all shows
+GET {{base}}/api/shows
+Authorization: Bearer {{token}}
+### Get seats for Show 4
+GET {{base}}/api/shows/4/seats
+Authorization: Bearer {{token}}
+### Book Seat S01
+POST {{base}}/api/bookings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "showId": 4,
+  "seatNumber": "S01"
+}
+### Get my bookings
+GET {{base}}/api/bookings
+Authorization: Bearer {{token}}
+### Get booking by ID
+GET {{base}}/api/bookings/4
+Authorization: Bearer {{token}}
+### Cancel booking
+DELETE {{base}}/api/bookings/4
+Authorization: Bearer {{token}}
+### Check seats after cancellation
+GET {{base}}/api/shows/4/seats
+Authorization: Bearer {{token}}
+### Rebook S01 after cancellation
+POST {{base}}/api/bookings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "showId": 4,
+  "seatNumber": "S01"
+}
+### Try booking the same seat again
+POST {{base}}/api/bookings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "showId": 4,
+  "seatNumber": "S01"
+}
+### Get booking by ID 5
+GET {{base}}/api/bookings/5
+Authorization: Bearer {{token}}
+### Load balancing test - Request 1
+GET {{base}}/api/movies
+Authorization: Bearer {{token}}
+
+### Load balancing test - Request 2
+GET {{base}}/api/movies
+Authorization: Bearer {{token}}
+
+### Load balancing test - Request 3
+GET {{base}}/api/movies
+Authorization: Bearer {{token}}
+
+### Load balancing test - Request 4
+GET {{base}}/api/movies
+Authorization: Bearer {{token}}
+
+### Load balancing test - Request 5
+GET {{base}}/api/movies
+Authorization: Bearer {{token}}
+
+### Load balancing test - Request 6
+GET {{base}}/api/movies
+Authorization: Bearer {{token}}
+### Test Movie Service failover
+GET {{base}}/api/movies
+Authorization: Bearer {{token}}
+### Check seats before concurrent booking
+GET {{base}}/api/shows/4/seats
+Authorization: Bearer {{token}}

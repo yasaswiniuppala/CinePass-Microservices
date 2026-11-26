@@ -1,0 +1,10 @@
+CREATE DATABASE IF NOT EXISTS movie_user_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS movie_movie_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS movie_show_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS movie_booking_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'movieapp'@'%' IDENTIFIED BY 'MovieApp@123';
+GRANT ALL PRIVILEGES ON movie_user_db.* TO 'movieapp'@'%';
+GRANT ALL PRIVILEGES ON movie_movie_db.* TO 'movieapp'@'%';
+GRANT ALL PRIVILEGES ON movie_show_db.* TO 'movieapp'@'%';
+GRANT ALL PRIVILEGES ON movie_booking_db.* TO 'movieapp'@'%';
+FLUSH PRIVILEGES;

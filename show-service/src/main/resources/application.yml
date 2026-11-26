@@ -1,0 +1,26 @@
+server:
+  port: ${SERVER_PORT:8083}
+spring:
+  application:
+    name: show-service
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/movie_show_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:movieapp}
+    password: ${DB_PASSWORD:MovieApp@123}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

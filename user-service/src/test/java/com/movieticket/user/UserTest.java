@@ -1,0 +1,1 @@
+package com.movieticket.user; import org.junit.jupiter.api.Test; import static org.junit.jupiter.api.Assertions.*; class UserTest {@Test void userStoresEmailAndHash(){User u=new User("u@example.com","$2a$hash");assertEquals("u@example.com",u.getEmail());assertEquals("$2a$hash",u.getPassword());}}

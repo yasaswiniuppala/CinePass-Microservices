@@ -1,0 +1,3 @@
+package com.movieticket.booking;
+import org.junit.jupiter.api.Test;import org.springframework.beans.factory.annotation.Autowired;import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;import static org.assertj.core.api.Assertions.assertThat;
+@DataJpaTest class BookingRepositoryIntegrationTest {@Autowired BookingRepository repository; @Test void persistsBookingAndFindsByOwner(){Booking b=repository.saveAndFlush(new Booking(3L,"S04","owner@example.com"));assertThat(repository.findByIdAndEmail(b.getId(),"owner@example.com")).isPresent();assertThat(repository.findByIdAndEmail(b.getId(),"other@example.com")).isEmpty();}}
